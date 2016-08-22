@@ -1,6 +1,5 @@
 var fs = require('fs'),
     gulp = require("gulp"),
-    plumber = require('gulp-plumber'),
     gulpLoadPlugins = require('gulp-load-plugins'),
     plugins = gulpLoadPlugins();
 
@@ -16,16 +15,43 @@ var serverPath = './static/',//服务器资源路径
     ];
 
 gulp.task('look', function () {
+    plugins.livereload.listen();
     gulp.watch([lessFiles], ['less-min']);
     gulp.watch([jsArr], ['js-min']);
+    gulp.watch( [jsArr] ).on('change',function(e){
+      jsHintrc(e);
+    });
 });
 gulp.task('less-min',function(){
+    var onError = function(err) {
+        plugins.notify.onError({
+            title: "Gulp",
+            subtitle: "Failure!",
+            message: "less error: <%= error.message %>",
+            sound: "Beep"
+        })(err);
+        this.emit('end');
+    };
   return gulp.src( [lessFiles] )
+        .pipe(plugins.plumber({
+            errorHandler: onError
+        }))
         .pipe(plugins.less({
             relativeUrls: true
         }))
+        .pipe(plugins.autoprefixer({
+            browsers: ['last 20 versions'],
+            cascade: true
+        }))
         .pipe(plugins.minifyCss())
-        .pipe(gulp.dest( staticDir ));
+        .pipe(gulp.dest( staticDir ))
+        .pipe(plugins.notify({
+            title: 'Gulp',
+            subtitle: 'success',
+            message: 'less OK',
+            sound: "Pop"
+        }))
+        .pipe(plugins.livereload());
 });
 
 gulp.task("js-min",function(){
@@ -39,6 +65,35 @@ gulp.task("js-min",function(){
         .pipe(plugins.concat("app.min.js"))
         .pipe(gulp.dest("static/app/"));
 });
+
+function jsHintrc(e){
+    var onError = function(err) {
+        plugins.notify.onError({
+            title:    "Gulp",
+            subtitle: "Failure!",
+            message:  "js代码不规范,看控制台先!!!",
+            sound:    "Beep"
+        })(err);
+        this.emit('end');
+    };
+    gulp.src( e.path,{ base: rootPath } )
+        .pipe(plugins.plumber({errorHandler: onError}))
+        .pipe(plugins.jshint())
+        .pipe(plugins.jshint.reporter(function (result, data, opt){
+            if( result ){
+                console.log( result );
+            }
+            return result;
+        }))
+        .pipe(plugins.jshint.reporter('fail'))
+        .pipe(plugins.notify({
+            title: 'Gulp',
+            subtitle: 'success',
+            message: 'js OK now',
+            sound: "Pop"
+        }))
+}
+
 
 var connect = plugins.connect;
 gulp.task('localhost', function() {

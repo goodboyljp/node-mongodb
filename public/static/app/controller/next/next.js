@@ -20,11 +20,11 @@ app.controller("next", ["$scope","$location",'$http',function($scope,$location,$
                 }
             }).error(function(res){
                 $scope.httpSuc = false;
-                alert('发生错误')
-            })
+                alert('发生错误');
+            });
             // $location.path("/").replace()
         	// $scope.count++;
         	// console.log( $scope.name.toLocaleLowerCase() );
-        }
+        };
     }
 ]);
