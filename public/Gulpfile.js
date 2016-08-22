@@ -48,7 +48,7 @@ gulp.task('localhost', function() {
     });
 });
 
-gulp.task("default",['look']);
+gulp.task("default",['look','less-min','js-min']);
 
 gulp.task("clean",function(){
     return gulp.src(staticDir + '*.min-*', {read: false})
