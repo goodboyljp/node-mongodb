@@ -99,7 +99,7 @@ var connect = plugins.connect;
 gulp.task('localhost', function() {
     connect.server({
         root: serverPath,
-        port: 1000
+        port: 8081
     });
 });
 
