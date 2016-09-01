@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var routes = require('./routers/router');
-// var settings = require('./settings');
+var settings = require('./settings');
 var flash = require('connect-flash');
 var multer  = require('multer');
 var session = require('express-session');
@@ -21,18 +21,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(session({
-//   resave: false,  
-//   saveUninitialized: true, 
-//   secret: settings.cookieSecret,
-//   key: settings.db,//cookie name
-//   cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
-//   store: new MongoStore({
-//     db: settings.db,
-//     host: settings.host,
-//     port: settings.port
-//   })
-// }));
+app.use(session({
+  resave: false,  
+  saveUninitialized: true, 
+  secret: settings.cookieSecret,
+  key: settings.db,//cookie name
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
+  store: new MongoStore({
+    db: settings.db,
+    host: settings.host,
+    port: settings.port
+  })
+}));
 app.use(multer({
   dest: './public/images',
   rename: function (fieldname, filename) {

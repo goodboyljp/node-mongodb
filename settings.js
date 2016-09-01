@@ -1,6 +1,6 @@
 module.exports = { 
-  cookieSecret: 'ngmsc', 
-  db: 'ngmsc', 
+  cookieSecret: 'node', 
+  db: 'node', 
   host: 'localhost',
   port: 27017
 }; 
